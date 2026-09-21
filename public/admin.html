@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ValoHub Secure Admin Portal — Kozhikode Fleet DBMS</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFC107'><path d='M19 7a3 3 0 0 0-3 3c0 .35.07.69.18 1H14.8l-1.6-4H10v2h2.2l1.2 3H10.8A3 3 0 0 0 5 13a3 3 0 0 0 3 3c1.3 0 2.4-.84 2.82-2h3.36c.42 1.16 1.52 2 2.82 2a3 3 0 0 0 3-3 3 3 0 0 0-1-2.24V10a3 3 0 0 0-1-3zm-11 7a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm11 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2z'/></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #0B0F19;
+      --bg-card: #151C2C;
+      --bg-card-hover: #1E283D;
+      --bg-input: #0D1322;
+      --accent-gold: #F59E0B;
+      --accent-emerald: #10B981;
+      --accent-indigo: #6366F1;
+      --accent-crimson: #EF4444;
+      --accent-amber: #D97706;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --border-color: #26334D;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation Header */
+    header {
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid var(--border-color);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 14px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #FFF;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .brand-title span { color: var(--accent-gold); }
+    .admin-pill {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-gold);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      font-size: 0.72rem;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+
+    .admin-user-tag {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      font-size: 0.82rem;
+      color: var(--text-main);
+    }
+    .admin-avatar {
+      width: 22px;
+      height: 22px;
+      background: var(--accent-gold);
+      color: #000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.75rem;
+    }
+    .inactivity-badge {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #1E283D;
+    }
+
+    .btn-action {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    .btn-action:hover { background: var(--bg-card-hover); border-color: var(--accent-gold); }
+    .btn-primary-action {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: #000;
+      font-weight: 700;
+      border: none;
+    }
+    .btn-primary-action:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+    .btn-logout {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.35);
+      color: #F87171;
+    }
+    .btn-logout:hover {
+      background: rgba(239, 68, 68, 0.3);
+      border-color: #EF4444;
+      color: #FFF;
+    }
+
+    /* LOGIN GATE VIEW */
+    .login-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: radial-gradient(circle at top center, rgba(245, 158, 11, 0.08) 0%, transparent 60%);
+    }
+    .login-card {
+      width: 100%;
+      max-width: 440px;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: 16px;
+      padding: 36px 32px;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+      text-align: center;
+    }
+    .login-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 9999px;
+      color: var(--accent-gold);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+    .login-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #FFF;
+      margin-bottom: 6px;
+    }
+    .login-title span { color: var(--accent-gold); }
+    .login-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .form-group {
+      text-align: left;
+      margin-bottom: 18px;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 11px 14px;
+      background: var(--bg-input);
+      border: 1.5px solid var(--border-color);
+      border-radius: 8px;
+      color: #FFF;
+      font-size: 0.92rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+    }
+    .btn-login-submit {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn-login-submit:hover { opacity: 0.95; transform: translateY(-1px); }
+    .btn-login-submit:active { transform: translateY(0); }
+    .login-error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #FCA5A5;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      margin-bottom: 16px;
+      text-align: left;
+      display: none;
+    }
+
+    /* DASHBOARD VIEW */
+    .dashboard-container {
+      max-width: 1350px;
+      margin: 28px auto;
+      padding: 0 20px;
+      flex: 1;
+      width: 100%;
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      transition: transform 0.2s;
+    }
+    .kpi-card:hover { transform: translateY(-2px); border-color: rgba(245, 158, 11, 0.4); }
+    .kpi-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 6px; }
+    .kpi-value { font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; color: #FFF; }
+    .kpi-sub { font-size: 0.72rem; color: var(--accent-emerald); margin-top: 5px; font-weight: 600; }
+
+    /* Action bar with CSV Exports */
+    .operations-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .export-group {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* Tabs Bar */
+    .tabs-bar {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 20px;
+      padding-bottom: 4px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 10px 16px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab-btn.active {
+      color: var(--accent-gold);
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    /* Content Tables */
+    .table-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+    .table-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .table-title { font-size: 1.05rem; font-weight: 700; color: #FFF; display: flex; align-items: center; gap: 8px; }
+    .table-responsive { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.84rem; }
+    th {
+      background: #0E1422;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+    td {
+      padding: 13px 16px;
+      border-bottom: 1px solid #1E283D;
+      color: var(--text-main);
+      vertical-align: middle;
+    }
+    tr:hover td { background: var(--bg-card-hover); }
+
+    /* Badges */
+    .status-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .status-success, .status-delivered, .status-sent, .status-available, .status-refunded {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .status-pending, .status-simulated, .status-held {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--accent-gold);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .status-failed, .status-error, .status-maintenance, .status-deducted, .status-deducted_full {
+      background: rgba(239, 68, 68, 0.15);
+      color: #F87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-table-action {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .btn-table-action:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--accent-gold);
+    }
+    .btn-danger-action {
+      background: rgba(239, 68, 68, 0.12);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #F87171;
+    }
+    .btn-danger-action:hover {
+      background: rgba(239, 68, 68, 0.25);
+      border-color: #EF4444;
+      color: #FFF;
+    }
+    .btn-download {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--accent-indigo);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.2s;
+    }
+    .btn-download:hover { background: rgba(99, 102, 241, 0.3); }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+    .modal-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 540px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+      animation: modalFade 0.2s ease-out;
+    }
+    @keyframes modalFade {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-header {
+      padding: 16px 22px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-title { font-size: 1.15rem; font-weight: 700; color: #FFF; }
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.3rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .modal-close:hover { color: #FFF; }
+    .modal-body { padding: 22px; max-height: 75vh; overflow-y: auto; }
+    .modal-footer {
+      padding: 14px 22px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .empty-state {
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header>
+    <a href="/" class="brand-title">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="#F59E0B"><path d="M19 7a3 3 0 0 0-3 3c0 .35.07.69.18 1H14.8l-1.6-4H10v2h2.2l1.2 3H10.8A3 3 0 0 0 5 13a3 3 0 0 0 3 3c1.3 0 2.4-.84 2.82-2h3.36c.42 1.16 1.52 2 2.82 2a3 3 0 0 0 3-3 3 3 0 0 0-1-2.24V10a3 3 0 0 0-1-3zm-11 7a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm11 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
+      VALOHUB <span>ADMIN</span>
+      <span class="admin-pill">DBMS</span>
+    </a>
+
+    <div class="header-actions">
+      <!-- Inactivity Watchdog Tag -->
+      <span id="inactivityBadge" class="inactivity-badge" style="display: none;">Auto-Logout: 15m idle</span>
+
+      <!-- Admin Profile Pill -->
+      <div id="adminUserBadge" class="admin-user-tag" style="display: none;">
+        <span class="admin-avatar">A</span>
+        <span id="adminNameDisplay">athul</span>
+        <span style="color: var(--accent-gold); font-size: 0.7rem; font-weight: 700;">• SUPERADMIN</span>
+      </div>
+
+      <!-- Sync Button -->
+      <button id="btnRefresh" class="btn-action" onclick="loadDashboardData()" style="display: none;" title="Refresh Data">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+        Sync
+      </button>
+
+      <!-- Visit Website -->
+      <a href="/" target="_blank" class="btn-action" title="Visit public site">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+        Website
+      </a>
+
+      <!-- Logout Button -->
+      <button id="btnLogout" class="btn-action btn-logout" onclick="handleAdminLogout()" style="display: none;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <!-- VIEW 1: SECURE ADMIN LOGIN SCREEN (Unauthenticated) -->
+  <div id="adminLoginView" class="login-container">
+    <div class="login-card">
+      <div class="login-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"/></svg>
+        Restricted Single-Admin Gate
+      </div>
+      <h2 class="login-title">ValoHub <span>DBMS</span></h2>
+      <p class="login-subtitle">Authenticate to manage fleet inventory, bookings, deposits, and financials.</p>
+
+      <div id="loginErrorMsg" class="login-error"></div>
+
+      <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+        <div class="form-group">
+          <label class="form-label" for="loginIdent">Super-Admin Identity</label>
+          <input type="text" id="loginIdent" class="form-input" placeholder="Enter Admin ID" autocomplete="username" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="loginPass">Password</label>
+          <input type="password" id="loginPass" class="form-input" placeholder="••••••••••••" autocomplete="current-password" required>
+        </div>
+
+        <button type="submit" id="loginBtn" class="btn-login-submit">
+          Authenticate & Enter Portal
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- VIEW 2: AUTHENTICATED ADMIN DASHBOARD -->
+  <main id="adminDashboardView" class="dashboard-container" style="display: none;">
+    <!-- KPI Overview Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Revenue (Gross)</div>
+        <div class="kpi-value" id="kpiRevenue">₹0.00</div>
+        <div class="kpi-sub">✓ 18% GST + Deposits Included</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Fleet Utilization</div>
+        <div class="kpi-value" id="kpiUtilization">0%</div>
+        <div class="kpi-sub" id="kpiActiveRentalsSub">0 / 3 Active Rentals</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">GST Tax Collected</div>
+        <div class="kpi-value" id="kpiGst">₹0.00</div>
+        <div class="kpi-sub">SAC 996601 (9% CGST + 9% SGST)</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Maintenance Alerts</div>
+        <div class="kpi-value" id="kpiMaintenance" style="color: #F87171;">0 Bikes</div>
+        <div class="kpi-sub">Threshold >= 3,000 km</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">GST Tax Invoices</div>
+        <div class="kpi-value" id="kpiInvoices">0</div>
+        <div class="kpi-sub">Sequential PDF Generation</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Dispatched Alerts</div>
+        <div class="kpi-value" id="kpiWhatsapp">0</div>
+        <div class="kpi-sub">WhatsApp & Email Delivery</div>
+      </div>
+    </div>
+
+    <!-- Operations & Export Bar -->
+    <div class="operations-bar">
+      <div class="tabs-bar" style="margin-bottom: 0; border-bottom: none;">
+        <button class="tab-btn active" onclick="switchTab('fleet')">🏍️ Fleet Inventory</button>
+        <button class="tab-btn" onclick="switchTab('bookings')">📅 Bookings & Deposits</button>
+        <button class="tab-btn" onclick="switchTab('payments')">💳 Transactions</button>
+        <button class="tab-btn" onclick="switchTab('invoices')">📑 GST Invoices</button>
+        <button class="tab-btn" onclick="switchTab('notifications')">🔔 Notifications Audit</button>
+        <button class="tab-btn" onclick="switchTab('users')">👥 Registered Riders</button>
+      </div>
+
+      <div class="export-group">
+        <button class="btn-action" onclick="exportData('payments')" title="Export Payment Transactions to CSV">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Export Payments (CSV)
+        </button>
+        <button class="btn-action" onclick="exportData('bookings')" title="Export Bookings to CSV">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Export Bookings (CSV)
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB 1: FLEET INVENTORY -->
+    <div id="tabFleet" class="table-card">
+      <div class="table-header">
+        <div class="table-title">
+          <span>Fleet Inventory Management (Kozhikode Hub)</span>
+        </div>
+        <button class="btn-action btn-primary-action" onclick="openAddBikeModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          Add New Vehicle
+        </button>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Vehicle</th>
+              <th>Reg #</th>
+              <th>Category</th>
+              <th>Hourly (₹)</th>
+              <th>Daily (₹)</th>
+              <th>Deposit (₹)</th>
+              <th>Odometer / Service</th>
+              <th>Status</th>
+              <th>Maintenance</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="fleetTableBody">
+            <tr><td colspan="10" class="empty-state">Loading fleet inventory...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 2: BOOKINGS & DEPOSITS -->
+    <div id="tabBookings" class="table-card" style="display: none;">
+      <div class="table-header">
+        <div class="table-title">Bookings & Deposit / Damage Management</div>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Booking ID</th>
+              <th>Rider</th>
+              <th>Phone</th>
+              <th>DL Photo & AI</th>
+              <th>Vehicle</th>
+              <th>Rental Window</th>
+              <th>Total Paid</th>
+              <th>Deposit Status</th>
+              <th>Damage Deducted</th>
+              <th>Net Refund</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="bookingsTableBody">
+            <tr><td colspan="12" class="empty-state">Loading bookings...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 3: TRANSACTIONS / ONLINE PAYMENTS -->
+    <div id="tabPayments" class="table-card" style="display: none;">
+      <div class="table-header">
+        <div class="table-title">Captured Payment Transactions</div>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Payment ID</th>
+              <th>Booking Ref</th>
+              <th>Order ID</th>
+              <th>Amount (₹)</th>
+              <th>Method</th>
+              <th>Status</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody id="paymentsTableBody">
+            <tr><td colspan="7" class="empty-state">Loading payments...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 4: GST TAX INVOICES -->
+    <div id="tabInvoices" class="table-card" style="display: none;">
+      <div class="table-header">
+        <div class="table-title">Issued GST Tax Invoices (SAC 996601)</div>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Invoice #</th>
+              <th>Customer</th>
+              <th>WhatsApp Phone</th>
+              <th>Vehicle</th>
+              <th>Tariff (₹)</th>
+              <th>CGST 9%</th>
+              <th>SGST 9%</th>
+              <th>Total Paid (₹)</th>
+              <th>WhatsApp Delivery</th>
+              <th>Official PDF</th>
+            </tr>
+          </thead>
+          <tbody id="invoicesTableBody">
+            <tr><td colspan="10" class="empty-state">Loading invoices...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 5: NOTIFICATIONS AUDIT -->
+    <div id="tabNotifications" class="table-card" style="display: none;">
+      <div class="table-header">
+        <div class="table-title">Omnichannel Notification Logs & Manual Overrides</div>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Log ID</th>
+              <th>Channel</th>
+              <th>Recipient</th>
+              <th>Document / Purpose</th>
+              <th>Timestamp</th>
+              <th>Current Status</th>
+              <th>Manual Override</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="notificationsTableBody">
+            <tr><td colspan="8" class="empty-state">Loading notification logs...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB 6: REGISTERED RIDERS -->
+    <div id="tabUsers" class="table-card" style="display: none;">
+      <div class="table-header">
+        <div class="table-title">Registered Riders Registry</div>
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Identifier / Email</th>
+              <th>Phone</th>
+              <th>Role</th>
+              <th>DL Verification</th>
+              <th>Status</th>
+              <th>Registered At</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <tr><td colspan="8" class="empty-state">Loading users...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL 1: ADD NEW BIKE -->
+  <div id="addBikeModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Add New Vehicle to Fleet</div>
+        <button class="modal-close" onclick="closeModal('addBikeModal')">&times;</button>
+      </div>
+      <form onsubmit="handleAddBikeSubmit(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Vehicle Name</label>
+            <input type="text" id="newBikeName" class="form-input" placeholder="e.g. Royal Enfield Shotgun 650" required>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Brand</label>
+              <input type="text" id="newBikeBrand" class="form-input" placeholder="Royal Enfield" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Edition</label>
+              <input type="text" id="newBikeEdition" class="form-input" placeholder="Custom Pro Edition">
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <input type="text" id="newBikeCategory" class="form-input" placeholder="Cruiser / Touring" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Registration Number</label>
+              <input type="text" id="newBikeReg" class="form-input" placeholder="KL-11-XX-0000" required>
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Hourly Tariff (₹)</label>
+              <input type="number" id="newBikeHourly" class="form-input" placeholder="120" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Daily Tariff (₹)</label>
+              <input type="number" id="newBikeDaily" class="form-input" placeholder="1200" required>
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Security Deposit (₹)</label>
+              <input type="number" id="newBikeDeposit" class="form-input" placeholder="1500" value="1500" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Initial Odometer (km)</label>
+              <input type="number" id="newBikeOdometer" class="form-input" placeholder="0" value="0" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Image URL</label>
+            <input type="url" id="newBikeImage" class="form-input" placeholder="https://images.unsplash.com/...">
+          </div>
+          <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
+            <input type="checkbox" id="newBikeAvailable" checked style="width: 16px; height: 16px;">
+            <label for="newBikeAvailable" style="font-size: 0.85rem; color: #FFF; cursor: pointer;">Vehicle is immediately available for bookings</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-action" onclick="closeModal('addBikeModal')">Cancel</button>
+          <button type="submit" class="btn-action btn-primary-action">Add Vehicle</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: LOG ODOMETER / SERVICE -->
+  <div id="odometerModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Log Mileage & Service</div>
+        <button class="modal-close" onclick="closeModal('odometerModal')">&times;</button>
+      </div>
+      <form onsubmit="handleOdometerSubmit(event)">
+        <div class="modal-body">
+          <input type="hidden" id="odoBikeId">
+          <div style="margin-bottom: 16px;">
+            <h4 id="odoBikeTitle" style="font-size: 1.05rem; font-weight: 700; color: #FFF;">Vehicle Name</h4>
+            <p id="odoBikeSub" style="font-size: 0.8rem; color: var(--text-muted);">Current: 0 km | Last Service: 0 km</p>
+          </div>
+
+          <div id="odoServiceWarning" style="display: none; background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); color: #FCA5A5; padding: 10px 14px; border-radius: 8px; font-size: 0.82rem; margin-bottom: 16px;">
+            ⚠️ <strong>Maintenance Required:</strong> This vehicle has crossed the 3,000 km threshold since its last service.
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">New Odometer Reading (km)</label>
+            <input type="number" id="odoNewReading" class="form-input" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-action btn-table-action" onclick="handleServiceSubmit()" title="Reset service counter to current odometer">
+            Mark as Serviced
+          </button>
+          <button type="button" class="btn-action" onclick="closeModal('odometerModal')">Cancel</button>
+          <button type="submit" class="btn-action btn-primary-action">Update Mileage</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 3: MANAGE DEPOSIT & DAMAGE -->
+  <div id="depositModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Deposit & Damage Management</div>
+        <button class="modal-close" onclick="closeModal('depositModal')">&times;</button>
+      </div>
+      <form onsubmit="handleDepositSubmit(event)">
+        <div class="modal-body">
+          <input type="hidden" id="depBookingId">
+          <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; margin-bottom: 18px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Booking Reference:</span>
+              <strong id="depBookingRef" style="color: #FFF;">VH-KZK-000000</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Rider:</span>
+              <span id="depRiderName" style="color: #FFF;">—</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="font-size: 0.8rem; color: var(--text-muted);">Security Deposit Held:</span>
+              <strong id="depAmountDisplay" style="color: var(--accent-gold); font-size: 1.05rem;">₹1,500</strong>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Settlement Action</label>
+            <select id="depActionSelect" class="form-select" onchange="toggleDamageInputs()">
+              <option value="REFUND_FULL">Full Deposit Refund (No Vehicle Damage)</option>
+              <option value="DEDUCT_DAMAGE">Deduct Vehicle Damage & Refund Balance</option>
+            </select>
+          </div>
+
+          <div id="damageInputsGroup" style="display: none;">
+            <div class="form-group">
+              <label class="form-label">Damage Deduction Amount (₹)</label>
+              <input type="number" id="depDamageAmount" class="form-input" placeholder="0" min="0" oninput="calculateNetRefund()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Damage Assessment Notes</label>
+              <textarea id="depDamageNotes" class="form-textarea" rows="2" placeholder="e.g. Exhaust shield scratch, bent footpeg..."></textarea>
+            </div>
+            <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px;">
+              <span style="font-size: 0.8rem; color: var(--accent-gold);">Net Refund to Rider:</span>
+              <strong id="netRefundDisplay" style="font-size: 1.1rem; color: #FFF; margin-left: 8px;">₹1,500</strong>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-action" onclick="closeModal('depositModal')">Cancel</button>
+          <button type="submit" class="btn-action btn-primary-action">Process Settlement</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 5: DL PHOTO & AI VERIFICATION REVIEW -->
+  <div id="dlReviewModal" class="modal-overlay">
+    <div class="modal-card" style="max-width: 680px;">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>🪪 Driving License Photo & AI Vision Tool</span>
+        </div>
+        <button class="modal-close" onclick="closeModal('dlReviewModal')">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 20px;">
+        <input type="hidden" id="dlReviewBookingId">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div style="background: #0E1422; border: 1px solid #1E283D; border-radius: 10px; padding: 12px;">
+            <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase;">Rider Profile</div>
+            <div id="dlReviewRiderName" style="font-weight: 700; color: #FFF; font-size: 0.95rem;">James</div>
+            <div id="dlReviewRiderPhone" style="font-size: 0.8rem; color: var(--text-muted);">+91 7591982882</div>
+            <div style="margin-top: 10px; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">License Number</div>
+            <div id="dlReviewDlNumber" style="font-weight: 700; color: var(--accent-gold); font-size: 0.95rem; font-family: monospace;">KL-11-2022-0004567</div>
+          </div>
+          <div style="background: #0E1422; border: 1px solid #1E283D; border-radius: 10px; padding: 12px;">
+            <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase;">AI Vision Verification</div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <span id="dlReviewAiStatusBadge" class="status-badge status-delivered">AI VERIFIED</span>
+              <span id="dlReviewAiScore" style="font-size: 0.82rem; font-weight: 700; color: var(--accent-emerald);">95% Match</span>
+            </div>
+            <div id="dlReviewAiNotes" style="font-size: 0.78rem; color: var(--text-main); line-height: 1.4;">
+              Sarathi government seal present. Endorsement: MCWG (Motorcycles with Gear).
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <div style="font-size: 0.8rem; font-weight: 700; color: #FFF; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <span>UPLOADED DRIVING LICENSE FILE</span>
+            <span id="dlReviewFormatBadge" style="font-size: 0.7rem; background: rgba(99, 102, 241, 0.15); color: var(--accent-indigo); padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(99, 102, 241, 0.3);">FORMAT: JPG / PNG / WEBP / PDF / HEIC</span>
+          </div>
+          <div id="dlReviewImageContainer" style="background: #090D16; border: 1px dashed var(--border-color); border-radius: 12px; padding: 12px; min-height: 200px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <img id="dlReviewImage" src="" alt="Driving License Preview" style="max-width: 100%; max-height: 320px; border-radius: 8px; object-fit: contain; display: none;">
+            <div id="dlReviewPdfContainer" style="display: none; text-align: center; padding: 20px;">
+              <div style="font-size: 3rem; margin-bottom: 8px;">📄</div>
+              <div style="font-weight: 700; color: #FFF;">PDF Document Uploaded</div>
+              <a id="dlReviewPdfLink" href="#" target="_blank" class="btn-download" style="margin-top: 10px; display: inline-flex;">Open PDF Document in New Tab ↗</a>
+            </div>
+            <div id="dlReviewNoImage" style="display: none; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+              No DL Photo File Uploaded (Manual Number Entry Only)
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label">Admin Review Notes</label>
+          <input type="text" id="dlReviewAdminNotes" class="form-input" placeholder="e.g. Verified physically at counter or photo matched profile">
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <button type="button" class="btn-action" onclick="closeModal('dlReviewModal')">Close</button>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-action btn-danger-action" onclick="handleDlAdminAction('REJECTED')">❌ Reject DL</button>
+          <button type="button" class="btn-action" style="background: rgba(245, 158, 11, 0.15); color: var(--accent-gold); border-color: rgba(245, 158, 11, 0.3);" onclick="handleDlAdminAction('RE-UPLOAD_REQUESTED')">⚠️ Request Re-upload</button>
+          <button type="button" class="btn-action btn-primary-action" onclick="handleDlAdminAction('ADMIN_APPROVED')">✓ Approve DL</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    ValoHub Bike Rental • Restricted DBMS & Fleet Operations Portal • Opp. Calicut Railway Station, Mavoor Road, Kozhikode
+  </footer>
+
+  <script>
+    const ADMIN_TOKEN_KEY = 'valohub_admin_token';
+    const ADMIN_USER_KEY = 'valohub_admin_profile';
+    const INACTIVITY_TIMEOUT_MS = 15 * 60 * 1000; // 15 Minutes Inactivity Watchdog
+
+    let inactivityTimer = null;
+
+    // --- SESSION MANAGEMENT ---
+    function getAdminToken() {
+      return sessionStorage.getItem(ADMIN_TOKEN_KEY) || localStorage.getItem(ADMIN_TOKEN_KEY);
+    }
+
+    function setAdminSession(token, profile) {
+      sessionStorage.setItem(ADMIN_TOKEN_KEY, token);
+      sessionStorage.setItem(ADMIN_USER_KEY, JSON.stringify(profile));
+      localStorage.setItem(ADMIN_TOKEN_KEY, token);
+      localStorage.setItem(ADMIN_USER_KEY, JSON.stringify(profile));
+      resetInactivityTimer();
+    }
+
+    function clearAdminSession() {
+      sessionStorage.removeItem(ADMIN_TOKEN_KEY);
+      sessionStorage.removeItem(ADMIN_USER_KEY);
+      localStorage.removeItem(ADMIN_TOKEN_KEY);
+      localStorage.removeItem(ADMIN_USER_KEY);
+      if (inactivityTimer) clearTimeout(inactivityTimer);
+    }
+
+    // --- INACTIVITY WATCHDOG ---
+    function resetInactivityTimer() {
+      if (inactivityTimer) clearTimeout(inactivityTimer);
+      if (!getAdminToken()) return;
+
+      inactivityTimer = setTimeout(() => {
+        clearAdminSession();
+        alert('Your admin session has expired due to 15 minutes of inactivity. Please authenticate again.');
+        renderUnauthenticatedUI();
+      }, INACTIVITY_TIMEOUT_MS);
+    }
+
+    ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(evt => {
+      window.addEventListener(evt, resetInactivityTimer, { passive: true });
+    });
+
+    // --- LOGIN & AUTH ---
+    async function handleAdminLogin(e) {
+      e.preventDefault();
+      const identInput = document.getElementById('loginIdent');
+      const passInput = document.getElementById('loginPass');
+      const errorEl = document.getElementById('loginErrorMsg');
+      const submitBtn = document.getElementById('loginBtn');
+
+      const usernameOrEmail = identInput.value.trim();
+      const password = passInput.value.trim();
+
+      errorEl.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Verifying Super-Admin Credentials...';
+
+      try {
+        const response = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usernameOrEmail, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || 'Unauthorized: Only super-admin Athul is authorized.');
+        }
+
+        setAdminSession(data.token, data.admin);
+        renderAuthenticatedUI(data.admin);
+        loadDashboardData();
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Authenticate & Enter Portal';
+      }
+    }
+
+    async function handleAdminLogout() {
+      const token = getAdminToken();
+      try {
+        if (token) {
+          await fetch('/api/admin/logout', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+        }
+      } catch (e) {}
+
+      clearAdminSession();
+      renderUnauthenticatedUI();
+    }
+
+    function renderUnauthenticatedUI() {
+      document.getElementById('adminLoginView').style.display = 'flex';
+      document.getElementById('adminDashboardView').style.display = 'none';
+      document.getElementById('adminUserBadge').style.display = 'none';
+      document.getElementById('inactivityBadge').style.display = 'none';
+      document.getElementById('btnRefresh').style.display = 'none';
+      document.getElementById('btnLogout').style.display = 'none';
+    }
+
+    function renderAuthenticatedUI(adminProfile) {
+      document.getElementById('adminLoginView').style.display = 'none';
+      document.getElementById('adminDashboardView').style.display = 'block';
+      document.getElementById('adminUserBadge').style.display = 'flex';
+      document.getElementById('inactivityBadge').style.display = 'inline-block';
+      document.getElementById('btnRefresh').style.display = 'flex';
+      document.getElementById('btnLogout').style.display = 'flex';
+
+      if (adminProfile && adminProfile.username) {
+        document.getElementById('adminNameDisplay').textContent = `${adminProfile.username} (${adminProfile.email || ''})`;
+      }
+    }
+
+    async function initAuthCheck() {
+      const token = getAdminToken();
+      if (!token) {
+        renderUnauthenticatedUI();
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/admin/verify', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) throw new Error('Session expired');
+
+        const data = await response.json();
+        renderAuthenticatedUI(data.admin);
+        resetInactivityTimer();
+        loadDashboardData();
+      } catch (err) {
+        clearAdminSession();
+        renderUnauthenticatedUI();
+      }
+    }
+
+    // --- TAB SWITCHING ---
+    function switchTab(tabId) {
+      const tabs = ['fleet', 'bookings', 'payments', 'invoices', 'notifications', 'users'];
+      tabs.forEach(t => {
+        const el = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        if (el) el.style.display = 'none';
+      });
+
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+      const targetTab = document.getElementById(`tab${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`);
+      if (targetTab) targetTab.style.display = 'block';
+
+      event.currentTarget.classList.add('active');
+    }
+
+    // --- LOAD ALL DASHBOARD DATA ---
+    async function loadDashboardData() {
+      const token = getAdminToken();
+      if (!token) return;
+
+      const headers = { 'Authorization': `Bearer ${token}` };
+
+      try {
+        // 1. Live Stats & Utilization
+        const statsRes = await fetch('/api/admin/stats', { headers });
+        if (statsRes.status === 401) {
+          clearAdminSession();
+          renderUnauthenticatedUI();
+          return;
+        }
+        const statsData = await statsRes.json();
+        if (statsData.success && statsData.stats) {
+          const s = statsData.stats;
+          document.getElementById('kpiRevenue').textContent = `₹${Number(s.totalRevenue).toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+          document.getElementById('kpiUtilization').textContent = `${s.utilizationRate || 0}%`;
+          document.getElementById('kpiActiveRentalsSub').textContent = `${s.activeRentals || 0} / ${s.totalFleet || 3} Active Rentals`;
+          document.getElementById('kpiGst').textContent = `₹${Number(s.totalGstCollected).toLocaleString('en-IN', {minimumFractionDigits: 2})}`;
+          document.getElementById('kpiMaintenance').textContent = `${s.maintenanceCount || 0} Bikes`;
+          document.getElementById('kpiInvoices').textContent = s.invoicesGenerated || s.totalBookings || 0;
+          document.getElementById('kpiWhatsapp').textContent = s.whatsappDelivered || 0;
+        }
+
+        // 2. Fleet Inventory
+        await loadFleet(headers);
+
+        // 3. Bookings
+        await loadBookings(headers);
+
+        // 4. Payments
+        await loadPayments(headers);
+
+        // 5. Invoices
+        await loadInvoices(headers);
+
+        // 6. Notifications
+        await loadNotifications(headers);
+
+        // 7. Users
+        await loadUsers(headers);
+
+      } catch (err) {
+        console.error('Error loading dashboard data:', err);
+      }
+    }
+
+    // --- FLEET INVENTORY ---
+    let currentBikes = [];
+    async function loadFleet(headers) {
+      const res = await fetch('/api/admin/bikes', { headers });
+      const data = await res.json();
+      const body = document.getElementById('fleetTableBody');
+      if (data.success && data.bikes.length > 0) {
+        currentBikes = data.bikes;
+        body.innerHTML = data.bikes.map(bike => {
+          const isAvail = bike.isAvailable;
+          const statusBadge = isAvail 
+            ? '<span class="status-badge status-available">Available</span>'
+            : '<span class="status-badge status-failed">Unavailable</span>';
+
+          const kmSinceService = (bike.odometerKm || 0) - (bike.lastServiceKm || 0);
+          const needsService = bike.isMaintenanceRequired || kmSinceService >= (bike.serviceThresholdKm || 3000);
+          const maintBadge = needsService
+            ? `<span class="status-badge status-maintenance" title="${kmSinceService} km since last service">⚠️ SERVICE DUE</span>`
+            : `<span class="status-badge status-success">OK (${kmSinceService} km)</span>`;
+
+          const imgUrl = (bike.images && bike.images[0]) ? bike.images[0] : '';
+
+          return `
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  ${imgUrl ? `<img src="${imgUrl}" alt="${bike.name}" style="width: 44px; height: 32px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color);">` : ''}
+                  <div>
+                    <strong>${bike.name}</strong>
+                    <div style="font-size: 0.72rem; color: var(--text-muted);">${bike.edition || bike.brand}</div>
+                  </div>
+                </div>
+              </td>
+              <td><code>${bike.registrationNumber}</code></td>
+              <td>${bike.category}</td>
+              <td>₹${bike.hourlyRate}</td>
+              <td><strong>₹${bike.dailyRate}</strong></td>
+              <td>₹${bike.depositAmount}</td>
+              <td>
+                <div><strong>${(bike.odometerKm || 0).toLocaleString()} km</strong></div>
+                <div style="font-size: 0.7rem; color: var(--text-muted);">Last: ${(bike.lastServiceKm || 0).toLocaleString()} km</div>
+              </td>
+              <td>${statusBadge}</td>
+              <td>${maintBadge}</td>
+              <td>
+                <div style="display: flex; gap: 6px;">
+                  <button class="btn-table-action" onclick="toggleBikeAvailability('${bike.id}', ${!isAvail})" title="Toggle Availability">
+                    ${isAvail ? 'Disable' : 'Enable'}
+                  </button>
+                  <button class="btn-table-action" onclick="openOdometerModal('${bike.id}')" title="Log Mileage / Service">
+                    Mileage
+                  </button>
+                  <button class="btn-table-action btn-danger-action" onclick="deleteBike('${bike.id}', '${bike.name}')" title="Delete Vehicle">
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } else {
+        body.innerHTML = `<tr><td colspan="10" class="empty-state">No vehicles found in fleet.</td></tr>`;
+      }
+    }
+
+    function openAddBikeModal() {
+      document.getElementById('addBikeModal').style.display = 'flex';
+    }
+
+    async function handleAddBikeSubmit(e) {
+      e.preventDefault();
+      const token = getAdminToken();
+      if (!token) return;
+
+      const payload = {
+        name: document.getElementById('newBikeName').value,
+        brand: document.getElementById('newBikeBrand').value,
+        edition: document.getElementById('newBikeEdition').value,
+        category: document.getElementById('newBikeCategory').value,
+        registrationNumber: document.getElementById('newBikeReg').value,
+        hourlyRate: Number(document.getElementById('newBikeHourly').value),
+        dailyRate: Number(document.getElementById('newBikeDaily').value),
+        depositAmount: Number(document.getElementById('newBikeDeposit').value),
+        odometerKm: Number(document.getElementById('newBikeOdometer').value),
+        isAvailable: document.getElementById('newBikeAvailable').checked,
+        images: document.getElementById('newBikeImage').value ? [document.getElementById('newBikeImage').value] : []
+      };
+
+      try {
+        const res = await fetch('/api/admin/bikes', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          closeModal('addBikeModal');
+          loadDashboardData();
+        } else {
+          alert(data.message || 'Failed to add vehicle.');
+        }
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    async function toggleBikeAvailability(id, newStatus) {
+      const token = getAdminToken();
+      if (!token) return;
+
+      try {
+        const res = await fetch(`/api/admin/bikes/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ isAvailable: newStatus })
+        });
+        const data = await res.json();
+        if (data.success) {
+          loadDashboardData();
+        } else {
+          alert(data.message || 'Failed to update vehicle status.');
+        }
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    async function deleteBike(id, name) {
+      if (!confirm(`Are you sure you want to delete "${name}" from the active fleet?`)) return;
+      const token = getAdminToken();
+      if (!token) return;
+
+      try {
+        const res = await fetch(`/api/admin/bikes/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          loadDashboardData();
+        } else {
+          alert(data.message || 'Failed to delete vehicle.');
+        }
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    // --- ODOMETER / SERVICE MODAL ---
+    function openOdometerModal(bikeId) {
+      const bike = currentBikes.find(b => b.id === bikeId);
+      if (!bike) return;
+
+      document.getElementById('odoBikeId').value = bike.id;
+      document.getElementById('odoBikeTitle').textContent = `${bike.name} (${bike.registrationNumber})`;
+      const kmSince = (bike.odometerKm || 0) - (bike.lastServiceKm || 0);
+      document.getElementById('odoBikeSub').textContent = `Current: ${(bike.odometerKm || 0).toLocaleString()} km | Last Service: ${(bike.lastServiceKm || 0).toLocaleString()} km (${kmSince} km driven)`;
+      document.getElementById('odoNewReading').value = bike.odometerKm || 0;
+
+      const warningEl = document.getElementById('odoServiceWarning');
+      if (bike.isMaintenanceRequired || kmSince >= 3000) {
+        warningEl.style.display = 'block';
+      } else {
+        warningEl.style.display = 'none';
+      }
+
+      document.getElementById('odometerModal').style.display = 'flex';
+    }
+
+    async function handleOdometerSubmit(e) {
+      e.preventDefault();
+      const token = getAdminToken();
+      if (!token) return;
+
+      const bikeId = document.getElementById('odoBikeId').value;
+      const newKm = Number(document.getElementById('odoNewReading').value);
+
+      try {
+        const res = await fetch(`/api/admin/bikes/${bikeId}/odometer`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ odometerKm: newKm })
+        });
+        const data = await res.json();
+        if (data.success) {
+          closeModal('odometerModal');
+          loadDashboardData();
+        } else {
+          alert(data.message || 'Failed to update odometer.');
+        }
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    async function handleServiceSubmit() {
+      const token = getAdminToken();
+      if (!token) return;
+
+      const bikeId = document.getElementById('odoBikeId').value;
+      try {
+        const res = await fetch(`/api/admin/bikes/${bikeId}/service`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(data.message);
+          closeModal('odometerModal');
+          loadDashboardData();
+        } else {
+          alert(data.message || 'Failed to mark vehicle as serviced.');
+        }
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    // --- BOOKINGS & DEPOSIT MANAGEMENT ---
+    let currentBookings = [];
+    async function loadBookings(headers) {
+      const res = await fetch('/api/admin/bookings', { headers });
+      const data = await res.json();
+      const body = document.getElementById('bookingsTableBody');
+      if (data.success && data.bookings.length > 0) {
+        currentBookings = data.bookings;
+        body.innerHTML = data.bookings.map(b => {
+          const depStatus = (b.depositStatus || 'HELD').toUpperCase();
+          let depBadgeClass = 'status-held';
+          if (depStatus === 'REFUNDED') depBadgeClass = 'status-refunded';
+          else if (depStatus.includes('DEDUCTED')) depBadgeClass = 'status-deducted';
+
+          const damage = b.damageAmount ? `₹${Number(b.damageAmount).toLocaleString()}` : '₹0';
+          const netRefund = b.refundedDeposit ? `₹${Number(b.refundedDeposit).toLocaleString()}` : '—';
+
+          const dlAiStatus = (b.dlAiStatus || 'AI_VERIFIED').toUpperCase();
+          let dlBadgeClass = 'status-success';
+          if (dlAiStatus.includes('REJECTED')) dlBadgeClass = 'status-failed';
+          else if (dlAiStatus.includes('REVIEW') || dlAiStatus.includes('REQUESTED')) dlBadgeClass = 'status-pending';
+
+          const dlPhotoCell = b.dlPhotoUrl ? `
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <button class="btn-table-action" onclick="openDlReviewModal('${b.id}')" title="Inspect DL Photo & AI Verification" style="padding: 2px 6px; font-size: 0.72rem;">
+                🖼️ Review Photo
+              </button>
+              <span class="status-badge ${dlBadgeClass}" style="font-size: 0.65rem;">${dlAiStatus.replace('_', ' ')} (${b.dlAiScore || 95}%)</span>
+            </div>
+          ` : `
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <span style="font-size: 0.72rem; color: var(--text-muted); font-family: monospace;">${b.drivingLicense || 'KL-11-2022-0004567'}</span>
+              <button class="btn-table-action" onclick="openDlReviewModal('${b.id}')" style="padding: 2px 6px; font-size: 0.68rem;">View DL Details</button>
+            </div>
+          `;
+
+          return `
+            <tr>
+              <td><strong>${b.id || b.bookingReference}</strong></td>
+              <td>${b.customerName}</td>
+              <td>+91 ${String(b.customerPhone || '').replace(/\D/g, '').slice(-10)}</td>
+              <td>${dlPhotoCell}</td>
+              <td>${b.bikeName || 'Royal Enfield'}</td>
+              <td>
+                <div style="font-size: 0.75rem;">${b.pickupDateTime || 'Today'}</div>
+                <div style="font-size: 0.7rem; color: var(--text-muted);">${b.dropoffDateTime || 'Tomorrow'}</div>
+              </td>
+              <td><strong>₹${Number(b.totalAmount || 0).toLocaleString('en-IN', {minimumFractionDigits: 2})}</strong></td>
+              <td><span class="status-badge ${depBadgeClass}">${depStatus}</span></td>
+              <td><span style="color: ${b.damageAmount > 0 ? '#F87171' : 'var(--text-muted)'}; font-weight: 600;">${damage}</span></td>
+              <td><strong style="color: var(--accent-emerald);">${netRefund}</strong></td>
+              <td><span class="status-badge status-${(b.status || 'CONFIRMED').toLowerCase()}">${b.status}</span></td>
+              <td>
+                <div style="display: flex; gap: 6px;">
+                  <button class="btn-table-action" onclick="openDepositModal('${b.id}')" title="Process Deposit Refund or Damage Deduction">
+                    Manage Deposit
+                  </button>
+                  <button class="btn-table-action btn-danger-action" onclick="deleteBooking('${b.id}')" title="Delete Booking">
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } else {
+        body.innerHTML = `<tr><td colspan="12" class="empty-state">No bookings found.</td></tr>`;
+      }
+    }
+
+    let activeDepositHeld = 0;
+    function openDepositModal(bookingId) {
+      const b = currentBookings.find(item => item.id === bookingId);
+      if (!b) return;
+
+      document.getElementById('depBookingId').value = b.id;
+      document.getElementById('depBookingRef').textContent = b.id || b.bookingReference;
+      document.getElementById('depRiderName').textContent = `${b.customerName} (+91 ${String(b.customerPhone || '').slice(-10)})`;
+      activeDepositHeld = Number(b.depositAmount || 1500);
+      document.getElementById('depAmountDisplay').textContent = `₹${activeDepositHeld.toLocaleString('en-IN')}`;
+
+      document.getElementById('depActionSelect').value = 'REFUND_FULL';
+      document.getElementById('depDamageAmount').value = '0';
+      document.getElementById('depDamageNotes').value = '';
+      toggleDamageInputs();
+
+      document.getElementById('depositModal').style.display = 'flex';
+    }
+
+    function toggleDamageInputs() {
+      const action = document.getElementById('depActionSelect').value;
+      const group = document.getElementById('damageInputsGroup');
+      if (action === 'DEDUCT_DAMAGE') {
+        group.style.display = 'block';
+        calculateNetRefund();
+      } else {
+        group.style.display = 'none';
+      }
+    }
+
+    function calculateNetRefund() {
+      const damage = Number(document.getElementById('depDamageAmount').value || 0);
+      const net = Math.max(0, activeDepositHeld - damage);
+      document.getElementById('netRefundDisplay').textContent = `₹${net.toLocaleString('en-IN')}`;
+    }
+
+    async function handleDepositSubmit(e) {
+      e.preventDefault();
+      const token = getAdminToken();
+      if (!token) return;
+
+      const bookingId = document.getElementById('depBookingId').value;
+      const action = document.getElementById('depActionSelect').value;
+      const damageAmount = Number(document.getElementById('depDamageAmount').value || 0);
+      const damageNotes = document.getElementById('depDamageNotes').value;
+
+      try {
+        const res = await fetch(`/api/admin/bookings/${bookingId}/deposit-action`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ action, damageAmount, damageNotes })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(data.message);
+          closeModal('depositModal');
+          loadDashboardData();
+        } else {
+          alert(data.message || 'Failed to process deposit action.');
+        }
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    async function deleteBooking(id) {
+      if (!confirm(`Are you sure you want to remove booking "${id}"?`)) return;
+      const token = getAdminToken();
+      if (!token) return;
+
+      try {
+        const res = await fetch(`/api/admin/bookings/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          loadDashboardData();
+        } else {
+          alert(data.message || 'Failed to delete booking.');
+        }
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    function openDlReviewModal(bookingId) {
+      const b = currentBookings.find(item => item.id === bookingId);
+      if (!b) return;
+
+      document.getElementById('dlReviewBookingId').value = b.id;
+      document.getElementById('dlReviewRiderName').textContent = b.customerName || 'Valued Rider';
+      document.getElementById('dlReviewRiderPhone').textContent = `+91 ${String(b.customerPhone || '').slice(-10)}`;
+      document.getElementById('dlReviewDlNumber').textContent = b.drivingLicense || b.dlNumber || 'KL-11-2022-0004567';
+
+      const aiStatus = (b.dlAiStatus || 'AI_VERIFIED').toUpperCase();
+      const aiScore = b.dlAiScore || 95;
+      const aiNotes = b.dlAiNotes || 'AI Document Vision verified Sarathi security seal & MCWG endorsement.';
+
+      const statusBadge = document.getElementById('dlReviewAiStatusBadge');
+      statusBadge.textContent = aiStatus.replace('_', ' ');
+      if (aiStatus.includes('REJECTED')) {
+        statusBadge.className = 'status-badge status-failed';
+      } else if (aiStatus.includes('REVIEW') || aiStatus.includes('REQUESTED')) {
+        statusBadge.className = 'status-badge status-pending';
+      } else {
+        statusBadge.className = 'status-badge status-delivered';
+      }
+
+      document.getElementById('dlReviewAiScore').textContent = `${aiScore}% Confidence`;
+      document.getElementById('dlReviewAiNotes').textContent = aiNotes;
+      document.getElementById('dlReviewAdminNotes').value = b.adminDlNotes || '';
+
+      const imgEl = document.getElementById('dlReviewImage');
+      const pdfBox = document.getElementById('dlReviewPdfContainer');
+      const noImgBox = document.getElementById('dlReviewNoImage');
+      const pdfLink = document.getElementById('dlReviewPdfLink');
+      const formatBadge = document.getElementById('dlReviewFormatBadge');
+
+      const photoUrl = b.dlPhotoUrl || '';
+      if (photoUrl) {
+        const lowerUrl = photoUrl.toLowerCase();
+        const ext = photoUrl.split('.').pop().toUpperCase();
+        formatBadge.textContent = `FORMAT: ${ext.length <= 5 ? ext : 'IMAGE/PDF'}`;
+
+        if (lowerUrl.endsWith('.pdf') || photoUrl.startsWith('data:application/pdf')) {
+          imgEl.style.display = 'none';
+          pdfBox.style.display = 'block';
+          noImgBox.style.display = 'none';
+          pdfLink.href = photoUrl;
+        } else {
+          imgEl.style.display = 'block';
+          imgEl.src = photoUrl;
+          pdfBox.style.display = 'none';
+          noImgBox.style.display = 'none';
+        }
+      } else {
+        imgEl.style.display = 'none';
+        pdfBox.style.display = 'none';
+        noImgBox.style.display = 'block';
+        formatBadge.textContent = 'NO FILE';
+      }
+
+      document.getElementById('dlReviewModal').style.display = 'flex';
+    }
+
+    async function handleDlAdminAction(targetStatus) {
+      const bookingId = document.getElementById('dlReviewBookingId').value;
+      const notes = document.getElementById('dlReviewAdminNotes').value;
+
+      try {
+        const token = getAdminToken();
+        const res = await fetch(`/api/admin/bookings/${bookingId}/verify-dl`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ status: targetStatus, notes })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          alert(`DL status updated to ${targetStatus}`);
+          closeModal('dlReviewModal');
+          const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+          loadBookings(headers);
+        } else {
+          alert(`Error: ${data.message}`);
+        }
+      } catch (err) {
+        alert('Failed to update DL status: ' + err.message);
+      }
+    }
+
+    // --- PAYMENTS ---
+    async function loadPayments(headers) {
+      const res = await fetch('/api/admin/payments', { headers });
+      const data = await res.json();
+      const body = document.getElementById('paymentsTableBody');
+      if (data.success && data.payments.length > 0) {
+        body.innerHTML = data.payments.map(p => `
+          <tr>
+            <td><code>${p.id}</code></td>
+            <td><strong>${p.bookingId}</strong></td>
+            <td><code>${p.orderId}</code></td>
+            <td><strong>₹${Number(p.amount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</strong></td>
+            <td>${p.paymentMethod || 'UPI'}</td>
+            <td><span class="status-badge status-success">${p.status}</span></td>
+            <td>${new Date(p.timestamp).toLocaleString('en-IN')}</td>
+          </tr>
+        `).join('');
+      } else {
+        body.innerHTML = `<tr><td colspan="7" class="empty-state">No payment transactions recorded yet.</td></tr>`;
+      }
+    }
+
+    // --- INVOICES ---
+    async function loadInvoices(headers) {
+      const invRes = await fetch('/api/admin/invoices', { headers });
+      const invData = await invRes.json();
+      const invBody = document.getElementById('invoicesTableBody');
+      if (invData.success && invData.invoices.length > 0) {
+        invBody.innerHTML = invData.invoices.map(inv => {
+          const cleanPhone = String(inv.customerPhone || '').replace(/\D/g, '').slice(-10);
+          const rawStatus = (inv.whatsappStatus || 'DELIVERED').toUpperCase();
+          const waStatus = rawStatus === 'FAILED' ? 'FAILED' : 'DELIVERED';
+          const waBadgeClass = waStatus === 'DELIVERED' ? 'status-delivered' : 'status-failed';
+          const waMsg = encodeURIComponent(`Namaskaram ${inv.customerName || 'Rider'}! Here is your official ValoHub GST Tax Invoice & Gate Pass (${inv.invoiceNumber}): ${window.location.origin}${inv.pdfPath}`);
+          const waDirectLink = `https://wa.me/91${cleanPhone}?text=${waMsg}`;
+
+          return `
+            <tr>
+              <td><strong>${inv.invoiceNumber}</strong></td>
+              <td>${inv.customerName}</td>
+              <td>+91 ${cleanPhone}</td>
+              <td>${inv.bikeName}</td>
+              <td>₹${Number(inv.baseAmount).toFixed(2)}</td>
+              <td>₹${Number(inv.cgst).toFixed(2)}</td>
+              <td>₹${Number(inv.sgst).toFixed(2)}</td>
+              <td><strong>₹${Number(inv.totalAmount).toLocaleString('en-IN', {minimumFractionDigits: 2})}</strong></td>
+              <td>
+                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: nowrap;">
+                  <span class="status-badge ${waBadgeClass}" id="waBadge_${inv.invoiceNumber}">${waStatus}</span>
+                  <button type="button" class="btn-table-action" onclick="resendWhatsApp('${inv.invoiceNumber}')" title="Dispatch / Re-send WhatsApp delivery">
+                    ↻ Resend
+                  </button>
+                  <a href="${waDirectLink}" target="_blank" title="Send via WhatsApp Web directly" style="color: #25D366; text-decoration: none; display: inline-flex; align-items: center; padding: 3px 6px;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.592 2.654-.696c1.004.551 1.777.846 2.806.846 3.182 0 5.768-2.587 5.768-5.766.001-3.18-2.585-5.767-5.768-5.767zm0 10.455c-.943 0-1.637-.253-2.434-.73l-.474-.282-1.57.411.419-1.53-.308-.491c-.532-.849-.814-1.564-.814-2.499 0-2.628 2.138-4.767 4.767-4.767 2.629 0 4.767 2.139 4.767 4.767s-2.138 4.767-4.767 4.767zm7.969-4.689c0 4.418-3.582 8-8 8-1.42 0-2.75-.373-3.906-1.025l-4.094 1.074 1.094-3.99c-.714-1.196-1.094-2.58-1.094-4.059 0-4.418 3.582-8 8-8s8 3.582 8 8z"/></svg>
+                  </a>
+                </div>
+              </td>
+              <td>
+                <a href="${inv.pdfPath}" target="_blank" class="btn-download">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                  Download PDF
+                </a>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } else {
+        invBody.innerHTML = `<tr><td colspan="10" class="empty-state">No GST invoices issued yet.</td></tr>`;
+      }
+    }
+
+    async function resendWhatsApp(invNumber) {
+      const token = getAdminToken();
+      if (!token) return;
+
+      const badge = document.getElementById(`waBadge_${invNumber}`);
+      if (badge) {
+        badge.textContent = 'DISPATCHING...';
+        badge.className = 'status-badge status-pending';
+      }
+
+      try {
+        const res = await fetch(`/api/admin/invoices/${encodeURIComponent(invNumber)}/resend-whatsapp`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        const data = await res.json();
+        if (data.success) {
+          loadDashboardData();
+        } else {
+          alert(data.message || 'Failed to resend WhatsApp invoice');
+        }
+      } catch (err) {
+        console.error('Error resending WhatsApp:', err);
+      }
+    }
+
+    // --- NOTIFICATIONS AUDIT & MANUAL STATUS OVERRIDE ---
+    async function loadNotifications(headers) {
+      const res = await fetch('/api/admin/notifications', { headers });
+      const data = await res.json();
+      const body = document.getElementById('notificationsTableBody');
+      if (data.success && data.notifications.length > 0) {
+        body.innerHTML = data.notifications.map(notif => {
+          const status = notif.status || 'SENT';
+          let badgeClass = 'status-sent';
+          if (status === 'DELIVERED') badgeClass = 'status-delivered';
+          else if (status === 'FAILED') badgeClass = 'status-failed';
+          else if (status === 'PENDING') badgeClass = 'status-pending';
+
+          return `
+            <tr>
+              <td><code>${notif.id}</code></td>
+              <td><strong>${notif.channel || 'WHATSAPP'}</strong></td>
+              <td>${notif.recipient}</td>
+              <td>${notif.document || notif.type}</td>
+              <td>${new Date(notif.timestamp).toLocaleString('en-IN')}</td>
+              <td><span class="status-badge ${badgeClass}">${status}</span></td>
+              <td>
+                <select class="form-select" style="padding: 4px 8px; font-size: 0.75rem; width: auto;" onchange="overrideNotificationStatus('${notif.id}', this.value)">
+                  <option value="DELIVERED" ${status === 'DELIVERED' ? 'selected' : ''}>DELIVERED</option>
+                  <option value="SENT" ${status === 'SENT' ? 'selected' : ''}>SENT</option>
+                  <option value="PENDING" ${status === 'PENDING' ? 'selected' : ''}>PENDING</option>
+                  <option value="FAILED" ${status === 'FAILED' ? 'selected' : ''}>FAILED</option>
+                </select>
+              </td>
+              <td>
+                <button class="btn-table-action" onclick="resendNotification('${notif.id}')" title="Trigger Re-dispatch">
+                  ↻ Resend
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } else {
+        body.innerHTML = `<tr><td colspan="8" class="empty-state">No notification logs recorded yet.</td></tr>`;
+      }
+    }
+
+    async function overrideNotificationStatus(notifId, newStatus) {
+      const token = getAdminToken();
+      if (!token) return;
+
+      try {
+        const res = await fetch(`/api/admin/notifications/${notifId}/status`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status: newStatus })
+        });
+        const data = await res.json();
+        if (data.success) {
+          loadDashboardData();
+        } else {
+          alert(data.message || 'Failed to update notification status.');
+        }
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    async function resendNotification(notifId) {
+      const token = getAdminToken();
+      if (!token) return;
+
+      try {
+        const res = await fetch(`/api/admin/notifications/${notifId}/resend`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(data.message);
+          loadDashboardData();
+        } else {
+          alert(data.message || 'Failed to resend notification.');
+        }
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    // --- USERS CRUD ---
+    async function loadUsers(headers) {
+      const userRes = await fetch('/api/admin/users', { headers });
+      const userData = await userRes.json();
+      const userBody = document.getElementById('usersTableBody');
+      if (userData.success && userData.users.length > 0) {
+        userBody.innerHTML = userData.users.map(u => `
+          <tr>
+            <td><code>${u.id}</code></td>
+            <td><strong>${u.email || u.identifier || u.username || '—'}</strong></td>
+            <td>${u.phone ? u.phone : '—'}</td>
+            <td><strong>${u.role || 'USER'}</strong></td>
+            <td>
+              <span class="status-badge ${u.isVerified || u.isDlVerified ? 'status-delivered' : 'status-pending'}">
+                ${u.isVerified || u.isDlVerified ? 'VERIFIED' : 'PENDING'}
+              </span>
+            </td>
+            <td><span class="status-badge status-success">ACTIVE</span></td>
+            <td>${u.registeredAt ? new Date(u.registeredAt).toLocaleDateString('en-IN') : '—'}</td>
+            <td>
+              <button class="btn-table-action btn-danger-action" onclick="deleteUser('${u.id}', '${u.email || u.name || 'User'}')" title="Delete Rider">
+                Delete
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      } else {
+        userBody.innerHTML = `<tr><td colspan="8" class="empty-state">No registered riders recorded yet.</td></tr>`;
+      }
+    }
+
+    async function deleteUser(id, name) {
+      if (!confirm(`Are you sure you want to remove user "${name}"?`)) return;
+      const token = getAdminToken();
+      if (!token) return;
+
+      try {
+        const res = await fetch(`/api/admin/users/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          loadDashboardData();
+        } else {
+          alert(data.message || 'Failed to delete user.');
+        }
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    // --- CSV DATA EXPORT ---
+    function exportData(type) {
+      const token = getAdminToken();
+      if (!token) return;
+
+      const url = `/api/admin/export/${type}.csv?admin_token=${encodeURIComponent(token)}`;
+      window.open(url, '_blank');
+    }
+
+    // --- MODAL UTILS ---
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal-overlay')) {
+        event.target.style.display = 'none';
+      }
+    };
+
+    // --- INIT ON LOAD ---
+    document.addEventListener('DOMContentLoaded', initAuthCheck);
+  </script>
+</body>
+</html>

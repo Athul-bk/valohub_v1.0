@@ -1,0 +1,156 @@
+[
+  {
+    "id": "himalayan-450",
+    "name": "Royal Enfield Himalayan 450",
+    "brand": "Royal Enfield",
+    "edition": "Summit Edition (Kamet White)",
+    "category": "Adventure Touring",
+    "engineCapacity": "452cc Liquid-Cooled Sherpa",
+    "registrationNumber": "KL-11-BV-4501",
+    "hourlyRate": 120,
+    "dailyRate": 1200,
+    "depositAmount": 1500,
+    "isAvailable": true,
+    "odometerKm": 2450,
+    "lastServiceKm": 0,
+    "serviceThresholdKm": 3000,
+    "isMaintenanceRequired": false,
+    "images": [
+      "https://images.unsplash.com/photo-1591637333184-19aa84b3e01f?auto=format&fit=crop&w=1000&q=80"
+    ],
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-09-19T09:31:00.416Z"
+  },
+  {
+    "id": "classic-350",
+    "name": "Royal Enfield Classic 350",
+    "brand": "Royal Enfield",
+    "edition": "Reborn Chrome Bronze",
+    "category": "Modern Classic Cruiser",
+    "engineCapacity": "349cc J-Series Smooth",
+    "registrationNumber": "KL-11-BX-4501",
+    "hourlyRate": 85,
+    "dailyRate": 850,
+    "depositAmount": 1000,
+    "isAvailable": true,
+    "odometerKm": 4200,
+    "lastServiceKm": 3000,
+    "serviceThresholdKm": 3000,
+    "isMaintenanceRequired": false,
+    "images": [
+      "https://images.unsplash.com/photo-1558981359-219d6364c9c8?auto=format&fit=crop&w=1000&q=80"
+    ],
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-09-19T14:08:44.291Z"
+  },
+  {
+    "id": "duke-390",
+    "name": "KTM 390 Duke",
+    "brand": "KTM",
+    "edition": "Gen-3 Electronic Orange",
+    "category": "Street Fighter / Performance",
+    "engineCapacity": "399cc Liquid-Cooled LC4c",
+    "registrationNumber": "KL-11-BZ-3901",
+    "hourlyRate": 110,
+    "dailyRate": 1100,
+    "depositAmount": 2000,
+    "isAvailable": true,
+    "odometerKm": 7500,
+    "lastServiceKm": 3000,
+    "serviceThresholdKm": 3000,
+    "isMaintenanceRequired": true,
+    "images": [
+      "https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=1000&q=80"
+    ],
+    "createdAt": "2026-01-01T00:00:00.000Z",
+    "updatedAt": "2026-09-19T14:22:42.566Z"
+  },
+  {
+    "id": "kl-11-sh-3219",
+    "name": "Royal Enfield Shotgun 650",
+    "brand": "Royal Enfield",
+    "edition": "2026 Special Black Edition",
+    "category": "Custom Cruiser / Touring",
+    "engineCapacity": "648cc Parallel Twin",
+    "registrationNumber": "KL-11-SH-3219",
+    "hourlyRate": 160,
+    "dailyRate": 3800,
+    "depositAmount": 2500,
+    "isAvailable": true,
+    "odometerKm": 150,
+    "lastServiceKm": 150,
+    "serviceThresholdKm": 3000,
+    "isMaintenanceRequired": false,
+    "images": [
+      "https://images.unsplash.com/photo-1558981359-219d6364c9c8?auto=format&fit=crop&w=1000&q=80"
+    ],
+    "createdAt": "2026-09-19T14:33:00.838Z",
+    "updatedAt": "2026-09-19T14:33:00.838Z"
+  },
+  {
+    "id": "kl-10-ca-2018",
+    "name": "royal enfield Shotgun 650",
+    "brand": "Royal Enfield",
+    "edition": "2026 limited edition",
+    "category": "Crusing",
+    "engineCapacity": "350cc",
+    "registrationNumber": "KL-10-CA-2018",
+    "hourlyRate": 130,
+    "dailyRate": 3120,
+    "depositAmount": 3000,
+    "isAvailable": true,
+    "odometerKm": 340,
+    "lastServiceKm": 340,
+    "serviceThresholdKm": 3000,
+    "isMaintenanceRequired": false,
+    "images": [
+      "https://wallpapercave.com/wp/wp14929364.webp"
+    ],
+    "createdAt": "2026-09-19T14:41:32.367Z",
+    "updatedAt": "2026-09-19T14:41:32.367Z"
+  },
+  {
+    "id": "kl-11-sh-9286",
+    "name": "Royal Enfield Shotgun 650",
+    "brand": "Royal Enfield",
+    "edition": "2026 Special Black Edition",
+    "category": "Custom Cruiser / Touring",
+    "engineCapacity": "648cc Parallel Twin",
+    "registrationNumber": "KL-11-SH-9286",
+    "hourlyRate": 160,
+    "dailyRate": 3800,
+    "depositAmount": 2500,
+    "isAvailable": true,
+    "odometerKm": 150,
+    "lastServiceKm": 150,
+    "serviceThresholdKm": 3000,
+    "isMaintenanceRequired": false,
+    "images": [
+      "https://images.unsplash.com/photo-1558981359-219d6364c9c8?auto=format&fit=crop&w=1000&q=80"
+    ],
+    "createdAt": "2026-09-19T14:59:53.938Z",
+    "updatedAt": "2026-09-19T14:59:53.938Z"
+  },
+  {
+    "id": "kl-11-sh-2398",
+    "name": "Royal Enfield Shotgun 650",
+    "brand": "Royal Enfield",
+    "edition": "2026 Special Black Edition",
+    "category": "Custom Cruiser / Touring",
+    "engineCapacity": "648cc Parallel Twin",
+    "registrationNumber": "KL-11-SH-2398",
+    "hourlyRate": 160,
+    "dailyRate": 3800,
+    "depositAmount": 2500,
+    "isAvailable": true,
+    "odometerKm": 150,
+    "lastServiceKm": 150,
+    "serviceThresholdKm": 3000,
+    "isMaintenanceRequired": false,
+    "images": [
+      "https://images.unsplash.com/photo-1558981359-219d6364c9c8?auto=format&fit=crop&w=1000&q=80"
+    ],
+    "createdAt": "2026-09-19T15:11:31.501Z",
+    "updatedAt": "2026-09-19T15:11:31.501Z"
+  }
+]

@@ -1,0 +1,44 @@
+{
+  "url": "http://localhost:3000",
+  "navStatus": 200,
+  "pageState": {
+    "title": "ValoHub Bike Rental - Premium Motorcycle & Scooter Rental in Kozhikode",
+    "bodyChildCount": 20,
+    "isBlank": false,
+    "hero": true,
+    "navbar": true,
+    "fleetGrid": true,
+    "bikeCards": 7,
+    "hasHydrationMismatch": false,
+    "snippet": "MALABAR SPECIAL Namaskaram! Welcome to ValoHub. Free sanitized helmet & 200 km/day included with all Kozhikode bookings. +91 75919 82882 Mavoor Road Hub, Calicut VALOHUB BIKE RENTAL KOZHIKODE • CALICU"
+  },
+  "totalConsoleMessages": 3,
+  "consoleMessages": [
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "location": {
+        "url": "http://localhost:3000/"
+      }
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "location": {
+        "url": "http://localhost:3000/"
+      }
+    },
+    {
+      "type": "verbose",
+      "text": "[DOM] Password field is not contained in a form: (More info: https://goo.gl/9p2vKq) %o",
+      "location": {
+        "url": "http://localhost:3000/"
+      }
+    }
+  ],
+  "totalNetworkRequests": 83,
+  "totalFailedRequests": 0,
+  "failedRequests": [],
+  "screenshotPath": "C:\\Users\\bkath\\.gemini\\antigravity\\brain\\036dc50e-076b-49bf-93d9-b2ab604dff67\\page_screenshot.png",
+  "fullScreenshotPath": "C:\\Users\\bkath\\.gemini\\antigravity\\brain\\036dc50e-076b-49bf-93d9-b2ab604dff67\\page_full_screenshot.png"
+}
